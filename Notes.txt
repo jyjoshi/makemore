@@ -1,0 +1,5 @@
+Notes:
+
+We start by creating character level bigram models. 
+Understand Pytorch Broadcasting. 
+Need to play around a little with Tensors. 
