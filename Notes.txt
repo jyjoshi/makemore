@@ -105,7 +105,11 @@ Hence we try to increase the number of neurons in the hidden layer bumping it fr
 This results in a nice reduction in training and validation loss 
 Also the losses converge indicating smooth generalization
 
-At this point, another bottleneck that we observe is the dimension of the embedding space. 
+At this point, another bottleneck that we observe is the dimension of the embedding space. with best train and val_loss achieved 2.30+
 Increasing the dimension of the embedding space could provide higher expressive power for our model. 
+
+On increasing the dimenions of the embeddings from 2 to 10
+and decreasing the hidden neurons number to 200 from 300
+We achieve a loss of around 2.20 showing better results. 
 
 
