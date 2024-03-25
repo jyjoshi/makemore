@@ -38,6 +38,11 @@ You can average this over the batch size.
 
 Part 2 (MLP):
 
+RNNs are universal approximators; they are very expressive and in principle can implement all(questionable) algorithms. 
+But they are not very easily optimizable using first - order techniques widely used. 
+Key to understanding why they are not optimizable easily is by understanding: 
+the activations and gradients and how they behave during training
+
 Curse of dimensionality: 
 If we want to increase the sequence of inputs
 The input space grows exponentially 
