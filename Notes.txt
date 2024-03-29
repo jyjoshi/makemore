@@ -155,3 +155,46 @@ Avoid it as much as possible, but seems to be super powerful
 Also intrinsically provides regularization
 
 
+Part 4: In the words of Karpathy, become a backprop ninja. 
+We essentially write the backward pass for a network manually instead of using Pytorch's loss.backward()
+Similar to what we did for micrograd. 
+The difference here is that we are dealing with vectors instead of scalars. 
+
+Important observations: 
+Always remember, the end goal is to calculate the gradient of loss with respect to each parameter that has contributed to the loss. 
+Hence, only the parameters that have CONTRIBUTED to the accumulation of loss will get affected. 
+This makes finding the derivatives a lot more intuitive. 
+
+Rely on dimensionality matching to compute the gradients. 
+Dimensions of gradients for a parameter = Dimensions of parameter
+
+If there is squashing in the forward pass, we will need broadcasting in the backward. 
+If there is broadcasting in the forward pass, we will need squashing in the backward. 
+All of this stems from dimensionality matching. 
+
+If a parameter has multiple fan_outs: 
+Its gradient will be an accumulation of all of its local derivatives with subsequent parameters multiplied by their respective gradients. 
+
+Short Example: 
+g = f(x)
+if dg is calculated.
+dx can be calculated using the local derivative and the incoming gradient. 
+dg: incoming gradient: dL/dg
+dL/dx = dg/dx * dL/dg
+
+Based on this nature of backpropagation: 
+We need to ensure that all the incoming gradients are calculated before we calculate the gradient for a parameter.
+
+We can club huge chunks of network into a single pass as long as we are able to effectively compute its gradients. 
+This can lead to boost in efficiency as lesser compute is required due to reductino in intermediary layers from input to output. 
+
+For this, you will have to express multiple passes as a single composite function and analytically derive the gradient. 
+
+Bessel's correction: denominator should be (n - 1) for variance as it is a more realistic approximation as compared to (n). 
+Doesn't matter so much if the value of n is large. 
+But let's take the example of Batch Normalization: 
+We can have sufficiently small size of batches and in such case it is better to stick with the Bessel's correction. 
+
+TODO:
+Practise analytical calculation of gradients for composite functions. A couple available in Part4 vide. 
+
