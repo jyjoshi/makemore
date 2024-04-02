@@ -198,3 +198,22 @@ We can have sufficiently small size of batches and in such case it is better to 
 TODO:
 Practise analytical calculation of gradients for composite functions. A couple available in Part4 vide. 
 
+
+Part 5: WaveNet and Designing networks for more efficient gpu compute utilization. 
+
+Wavenet processes sequences of audio data using dilated convolutions to capture temporal dependencies. 
+Torch matmul implementation: 
+It only matches the dimensions of the very last value in shape of the first tensor with the very first value of shape in the second tensor while using @
+But we need to be careful while implementing different layers as they should also be able to process this multidimensional input. 
+Specifically the BatchNorm Layer needs to ensure that it is only calculating the mean and variance along the desired dimensions. 
+We handle that in this lecture. 
+
+Haven't implemented the residual connections and skip connections
+Why convolutions: Makes it more efficient to train the network. Doesn't change the behavioiur of the network 
+Convolutions allows us to slide the entire model efficiently over the input sequence. 
+Makes the for loop: inside the cuda and not in python. 
+
+Notes on development process:
+Prototype in Jupyter and once satisfied with the functionality 
+Copy paste into the main repository 
+Kick off experiements. 
