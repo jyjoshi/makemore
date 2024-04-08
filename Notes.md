@@ -127,7 +127,7 @@
   - Final Improvements - On increasing the dimenions of the embeddings from 2 to 10
     and decreasing the hidden neurons number from 300 to 200 - We achieve a loss of around 2.20 showing better results.
 
-### Part-3 Activations, Gradients and BatchNorms
+## Part-3 Activations, Gradients and BatchNorms
 
 Loss-Graph looks like a hockey stick because not good initializations resulting in some predictions which are wrong being too confidently predicted.
 Initialization is important as when we set up our network the network still hasn't learned anything.
@@ -142,20 +142,21 @@ If you fix this, you get a better loss at the end of training.
 As it is using training more efficiently not wasting the time to
 squash the weights to the right values: Hockey stick nature of loss over iterations, the stick is not that useful (Could be a few thousand iterations)
 
-- Activations:
+### Activations
 
-  - We want to control the activations
-  - Shouldn't be squashed to zero or explode to infeasible values
-  - We want a roughly gaussian activation
-  - How do we scale the weights and biases so that everything is as controlled as possible (kaiming initialization)
+- We want to control the activations
+- Shouldn't be squashed to zero or explode to infeasible values
+- We want a roughly gaussian activation
+- How do we scale the weights and biases so that everything is as controlled as possible (kaiming initialization)
 
-- Normalization:
-  - Batch Normalization: Probably came out first
-  - A layer which can be sprinkled throughout the net wherever linearity is present. Before activations.
-  - It leads to Centering of the inputs to the next layer by coupling of all examples
-  - Due to this centering effect, individual biases loose the value and hence we require two new parameters for the batchNorm layer
-  - bngain and bnbias
-  - Our final equation on the output of the batchnorm layer looks like this: bngain \* (batch normalization) + bnBias
+### Normalization
+
+- Batch Normalization: Probably came out first
+- A layer which can be sprinkled throughout the net wherever linearity is present. Before activations.
+- It leads to Centering of the inputs to the next layer by coupling of all examples
+- Due to this centering effect, individual biases loose the value and hence we require two new parameters for the batchNorm layer
+- bngain and bnbias
+- Our final equation on the output of the batchnorm layer looks like this: bngain \* (batch normalization) + bnBias
 
 Normalization Causes huge amounts of bugs, becuase it couples examples vertically in the neural net
 Avoid it as much as possible, but seems to be super powerful
@@ -164,13 +165,16 @@ Also intrinsically provides regularization
 
 Part 3 also shows how to analyse the behaviour of the network by studying the characteristics of your activations and gradients being propagated. You want to ensure that all the layers receive values whch have similar distribution. This is discussed well in the video.
 
-### Part-4 Becoming a BackProp Ninja
+## Part-4 Becoming a BackProp Ninja
+
+### Introduction
 
 We essentially write the backward pass for a network manually instead of using Pytorch's loss.backward()
 Similar to what we did for micrograd.
 The difference here is that we are dealing with vectors instead of scalars.
 
-Important observations:
+### Important Observations
+
 Always remember, the end goal is to calculate the gradient of loss with respect to each parameter that has contributed to the loss.
 Hence, only the parameters that have CONTRIBUTED to the accumulation of loss will get affected.
 This makes finding the derivatives a lot more intuitive.
@@ -186,7 +190,7 @@ If a parameter has multiple fan_outs:
 
 - Its gradient will be an accumulation of all of its local derivatives with subsequent parameters multiplied by their respective gradients.
 
-Short Example:
+### Basic gradient calculation example
 
 ```
 g = f(x)
@@ -204,10 +208,39 @@ This can lead to boost in efficiency as lesser compute is required due to reduct
 
 For this, you will have to express multiple passes as a single composite function and analytically derive the gradient.
 
+### Bessel's correction
+
 Bessel's correction: denominator should be (n - 1) for variance as it is a more realistic approximation as compared to (n).
 Doesn't matter so much if the value of n is large.
 But let's take the example of Batch Normalization:
 We can have sufficiently small size of batches and in such case it is better to stick with the Bessel's correction.
 
-TODO:
+### TODO
+
 Practise analytical calculation of gradients for composite functions. A couple available in Part4 vide.
+
+###Part 5: WaveNet and Designing networks for more efficient gpu compute utilization.
+
+## Wavenet
+
+Wavenet processes sequences of audio data using dilated convolutions to capture temporal dependencies.
+Torch matmul implementation and other functions:
+It only matches the dimensions of the very last value in shape of the first tensor with the very first value of shape in the second tensor while using @
+
+We need to be careful while implementing different layers as they should also be able to process this multidimensional input.
+Specifically the BatchNorm Layer needs to ensure that it is only calculating the mean and variance along the desired dimensions.
+We handle that in this lecture.
+
+Haven't implemented the residual connections and skip connections
+
+### Why convolutions: Makes it more efficient to train the network
+
+- Doesn't change the behavioiur of the network
+- Convolutions allows us to slide the entire model efficiently over the input sequence.
+- Makes the for loop: inside the cuda and not in python.
+
+### Notes on Development Process
+
+- Prototype in Jupyter and once satisfied with the functionality
+- Copy paste into the main repository
+- Kick off experiements.
