@@ -126,3 +126,88 @@
 
   - Final Improvements - On increasing the dimenions of the embeddings from 2 to 10
     and decreasing the hidden neurons number from 300 to 200 - We achieve a loss of around 2.20 showing better results.
+
+### Part-3 Activations, Gradients and BatchNorms
+
+Loss-Graph looks like a hockey stick because not good initializations resulting in some predictions which are wrong being too confidently predicted.
+Initialization is important as when we set up our network the network still hasn't learned anything.
+In such a scenario the output it generates should be uniform to a large extent over the output space.
+
+Too confident of a wrong prediction can lead to the loss being large
+which leads to gradients being large
+which leads to weight updates being large
+which doesn't lead to a smooth optimization of model parameters
+
+If you fix this, you get a better loss at the end of training.
+As it is using training more efficiently not wasting the time to
+squash the weights to the right values: Hockey stick nature of loss over iterations, the stick is not that useful (Could be a few thousand iterations)
+
+- Activations:
+
+  - We want to control the activations
+  - Shouldn't be squashed to zero or explode to infeasible values
+  - We want a roughly gaussian activation
+  - How do we scale the weights and biases so that everything is as controlled as possible (kaiming initialization)
+
+- Normalization:
+  - Batch Normalization: Probably came out first
+  - A layer which can be sprinkled throughout the net wherever linearity is present. Before activations.
+  - It leads to Centering of the inputs to the next layer by coupling of all examples
+  - Due to this centering effect, individual biases loose the value and hence we require two new parameters for the batchNorm layer
+  - bngain and bnbias
+  - Our final equation on the output of the batchnorm layer looks like this: bngain \* (batch normalization) + bnBias
+
+Normalization Causes huge amounts of bugs, becuase it couples examples vertically in the neural net
+Avoid it as much as possible, but seems to be super powerful
+
+Also intrinsically provides regularization
+
+Part 3 also shows how to analyse the behaviour of the network by studying the characteristics of your activations and gradients being propagated. You want to ensure that all the layers receive values whch have similar distribution. This is discussed well in the video.
+
+### Part-4 Becoming a BackProp Ninja
+
+We essentially write the backward pass for a network manually instead of using Pytorch's loss.backward()
+Similar to what we did for micrograd.
+The difference here is that we are dealing with vectors instead of scalars.
+
+Important observations:
+Always remember, the end goal is to calculate the gradient of loss with respect to each parameter that has contributed to the loss.
+Hence, only the parameters that have CONTRIBUTED to the accumulation of loss will get affected.
+This makes finding the derivatives a lot more intuitive.
+
+Rely on dimensionality matching to compute the gradients.
+Dimensions of gradients for a parameter = Dimensions of parameter
+
+If there is squashing in the forward pass, we will need broadcasting in the backward.
+If there is broadcasting in the forward pass, we will need squashing in the backward.
+All of this stems from dimensionality matching.
+
+If a parameter has multiple fan_outs:
+
+- Its gradient will be an accumulation of all of its local derivatives with subsequent parameters multiplied by their respective gradients.
+
+Short Example:
+
+```
+g = f(x)
+if dg is calculated.
+dx can be calculated using the local derivative and the incoming gradient.
+dg === incoming gradient === dL/dg
+dL/dx = dg/dx \* dL/dg
+```
+
+Based on this nature of backpropagation:
+We need to ensure that all the incoming gradients are calculated before we calculate the gradient for a parameter.
+
+We can club huge chunks of network into a single pass as long as we are able to effectively compute its gradients.
+This can lead to boost in efficiency as lesser compute is required due to reductino in intermediary layers from input to output.
+
+For this, you will have to express multiple passes as a single composite function and analytically derive the gradient.
+
+Bessel's correction: denominator should be (n - 1) for variance as it is a more realistic approximation as compared to (n).
+Doesn't matter so much if the value of n is large.
+But let's take the example of Batch Normalization:
+We can have sufficiently small size of batches and in such case it is better to stick with the Bessel's correction.
+
+TODO:
+Practise analytical calculation of gradients for composite functions. A couple available in Part4 vide.
