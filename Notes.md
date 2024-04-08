@@ -1,0 +1,46 @@
+# Makemore Notes
+
+## Part-1 Bi-gram models
+
+### Introduction
+
+- We start by creating character level bigram models.
+- Understand Pytorch Broadcasting.
+- Need to play around a little with Tensors.
+- Understand broadcasting rules in detail.
+
+### Formulating a Deep Learning Problem
+
+- Need to understand how to formulate a deep learning problem from a real-world problem
+- Translate from real-world domain to deep-learning domain
+- One example given in the bigram notebook is really good.
+- You solve a problem using a probabilistic model
+- You then, create an equivalent deep learning model which produces similar outputs.
+- Learn the correlation, and techniques which transform the model space.
+
+### Network Description
+
+- Bigram network is a simple 1-layer FC network.
+
+- Encode the input data using One-Hot-Encoding:
+- You need to provide the right input as it will determine the activations which get triggered.
+
+- Matrix Multiplication produces logits: which can be seen as log-counts.
+- We use softmax at the end to create a probaiblity distribution.
+
+- And then sample from the distribution during inference time.
+
+### Formulating the loss
+
+- For training we calculate the loss
+- We want to maximise the likelihood of y-label of training data being selected during sampling from our model.
+- But the probability is a number between 0-1 hences can diminish very quickly with subsequent multiplication over sequences
+- Also from a deep learning perspective we want to deal with minimization of loss for optimization
+  (Hopefully add some convexity to the problem)
+
+- So we take the log of Maximum likelihood - log likelihood
+- Now log for an input ranging from 0 to 1 is a -ve value
+- We want to maximize this negative value
+- Which is similar to saying minimise the negation of this value
+- And that brings us to negative log likelihood being the loss that we try to minimise.
+- You can average this over the batch size.
