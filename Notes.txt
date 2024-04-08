@@ -114,7 +114,7 @@ At this point, another bottleneck that we observe is the dimension of the embedd
 Increasing the dimension of the embedding space could provide higher expressive power for our model. 
 
 On increasing the dimenions of the embeddings from 2 to 10
-and decreasing the hidden neurons number to 200 from 300
+and decreasing the hidden neurons number from 300 to 200
 We achieve a loss of around 2.20 showing better results. 
 
 
