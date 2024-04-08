@@ -219,9 +219,7 @@ We can have sufficiently small size of batches and in such case it is better to 
 
 Practise analytical calculation of gradients for composite functions. A couple available in Part4 vide.
 
-###Part 5: WaveNet and Designing networks for more efficient gpu compute utilization.
-
-## Wavenet
+## Wavenet and Designing networks for more efficient gpu compute utilization.
 
 Wavenet processes sequences of audio data using dilated convolutions to capture temporal dependencies.
 Torch matmul implementation and other functions:
