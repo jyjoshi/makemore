@@ -4,7 +4,7 @@
 
 ### Introduction
 
-- We start by creating character level bigram models.
+- We start by creating character-level bigram models.
 - Understand Pytorch Broadcasting.
 - Need to play around a little with Tensors.
 - Understand broadcasting rules in detail.
@@ -15,43 +15,43 @@
 - Translate from real-world domain to deep-learning domain
 - One example given in the bigram notebook is really good.
 - You solve a problem using a probabilistic model
-- You then, create an equivalent deep learning model which produces similar outputs.
-- Learn the correlation, and techniques which transform the model space.
+- You then create an equivalent deep learning model which produces similar outputs.
+- Learn the correlation and techniques that transform the model space.
 
 ### Network Description
 
 - Bigram network is a simple 1-layer FC network.
 
 - Encode the input data using One-Hot-Encoding:
-- You need to provide the right input as it will determine the activations which get triggered.
+- You need to provide the right input as it will determine the activations that get triggered.
 
-- Matrix Multiplication produces logits: which can be seen as log-counts.
-- We use softmax at the end to create a probaiblity distribution.
+- Matrix Multiplication produces logits: which can be seen as log counts.
+- We use softmax at the end to create a probability distribution.
 
-- And then sample from the distribution during inference time.
+- Then sample the distribution during inference time.
 
 ### Formulating the loss
 
-- For training we calculate the loss
-- We want to maximise the likelihood of y-label of training data being selected during sampling from our model.
-- But the probability is a number between 0-1 hences can diminish very quickly with subsequent multiplication over sequences
-- Also from a deep learning perspective we want to deal with minimization of loss for optimization
-  (Hopefully add some convexity to the problem)
+- For training, we calculate the loss
+- We want to maximize the likelihood of the y-label of training data being selected during sampling from our model.
+- But the probability is a number between 0-1 hence, it can diminish very quickly with subsequent multiplication over sequences
+- Also, from a deep learning perspective, we want to deal with the minimization of loss for optimization
+  (Hopefully, add some convexity to the problem)
 
-- So we take the log of Maximum likelihood - log likelihood
+- So we take the log of Maximum likelihood - log-likelihood
 - Now log for an input ranging from 0 to 1 is a -ve value
 - We want to maximize this negative value
-- Which is similar to saying minimise the negation of this value
-- And that brings us to negative log likelihood being the loss that we try to minimise.
+- Which is similar to saying minimize the negation of this value
+- And that brings us to negative log-likelihood being the loss we try to minimise.
 - You can average this over the batch size.
 
 ## Part-2 MLP
 
 ### Introduction
 
-- RNNs are universal approximators; they are very expressive and in principle can implement all(questionable) algorithms.
-- But they are not very easily optimizable using first - order techniques widely used.
-- Key to understanding why they are not optimizable easily is by understanding:
+- RNNs are universal approximators; they are very expressive and, in principle, can implement all(questionable) algorithms.
+- However, they are not very easily optimizable using first-order techniques that are widely used.
+- The key to understanding why they are not optimizable easily is by understanding:
   - the activations and gradients and how they behave during training.
 
 ### Curse of dimensionality:
@@ -60,25 +60,25 @@
   - The input space grows exponentially
   - for 2 character input sequence: 27 x 27 = 729
   - For 3 character input sequence: 729 x 27 ~ 20000
-  - Also the counts for following characters become less and less
-- So huge space and not a lot of information Summarizes Curse of dimensionality
+  - Also, the counts for following characters become less and less
+- So, huge space and not a lot of information Summarizes Curse of dimensionality
 
-- Few more points to consider:
+- A Few more points to consider:
 
-  - Distance Concentration: Distance between nearest and the farthest point converges,
+  - Distance Concentration: Distance between the nearest and the farthest point converges,
   - which complicates tasks like KNN search.
   - Increased Computational Complexity: Algorithms that work well on low-dimensional data become computationally infeasible in high dimensions due to increased data volume and the need for more complex models.
   - Overfitting: High Dimensions allow more opportunity to fit the noise.
 
 - Base Paper:
-  - Bengio et al (2003) Work on word level language model
-  - But we will work with character level language modeling
+  - Bengio et al. (2003) Work on word-level language model
+  - But we will work with character-level language modeling
 
 ### Motivation behind Mini-Batch
 
 - Mini-Batch: Reduces the quality of gradient
 - It is much better to have an approximate gradient and take more steps
-- Than to evaluate the exact gradient and take fewer steps
+- Then to evaluate the exact gradient and take fewer steps
 
 ### Finding the right learning rate
 
@@ -87,9 +87,9 @@
 - For a range of lr that sufficiently reduces the loss and converges
   create a linspace over the range specifying appropriate intervals
 - You can create the linspace over the exponents of the range as well
-  In this case the actual lrs will be 10 \*\* exponents over the linspace.
+  In this case, the actual lrs will be 10 \*\* exponents over the linspace.
 - Now plot the graph of loss and lrs or lre and find the appropriate lr.
-- At later stages to capture finer details you will have to decay the lr.
+- At later stages, to capture finer details, you will have to decay the lr.
 
 - This is roughly what we do
 
@@ -115,23 +115,24 @@
   - First:
     - There is a variance in the loss depending on the mini-batch inputs
     - Suggesting that the size of the mini-batch could be too low
-    - We do not necessarily update the size of the mini-batches but we can take a look at this.
+    - We do not necessarily update the mini-batch size, but we can look at this.
   - Second:
-    - We also observe signs of underfitting or buggy behaviour as at times the trainig loss is larger than validation loss
+    - We also observe signs of underfitting or buggy behavior as, at times, the training loss is larger than the validation loss
     - Hence we try to increase the number of neurons in the hidden layer bumping it from 100 to 300.
   - Third:
 
-    - At this point, another bottleneck that we observe is the dimension of the embedding space. with best train and val_loss achieved 2.30+
+    - At this point, another bottleneck we observe is the dimension of the embedding space. with best train and val_loss achieved 2.30+
     - Increasing the dimension of the embedding space could provide higher expressive power for our model.
 
-  - Final Improvements - On increasing the dimenions of the embeddings from 2 to 10
-    and decreasing the hidden neurons number from 300 to 200 - We achieve a loss of around 2.20 showing better results.
+  - Final Improvements - On increasing the dimensions of the embeddings from 2 to 10
+    and decreasing the hidden neurons number from 300 to 200
+  - We achieved a loss of around 2.20, which showed better results.
 
 ## Part-3 Activations, Gradients and BatchNorms
 
-Loss-Graph looks like a hockey stick because not good initializations resulting in some predictions which are wrong being too confidently predicted.
-Initialization is important as when we set up our network the network still hasn't learned anything.
-In such a scenario the output it generates should be uniform to a large extent over the output space.
+The loss looks like a hockey stick because of not good initializations resulting in some wrong predictions being too confidently predicted.
+Initialization is important as when we set up our network, it still hasn't learned anything.
+In such a scenario, its output should be uniform to a large extent over the output space.
 
 Too confident of a wrong prediction can lead to the loss being large
 which leads to gradients being large
@@ -139,31 +140,31 @@ which leads to weight updates being large
 which doesn't lead to a smooth optimization of model parameters
 
 If you fix this, you get a better loss at the end of training.
-As it is using training more efficiently not wasting the time to
+As it is using training more efficiently, not wasting the time to
 squash the weights to the right values: Hockey stick nature of loss over iterations, the stick is not that useful (Could be a few thousand iterations)
 
 ### Activations
 
 - We want to control the activations
 - Shouldn't be squashed to zero or explode to infeasible values
-- We want a roughly gaussian activation
+- We want a roughly Gaussian activation
 - How do we scale the weights and biases so that everything is as controlled as possible (kaiming initialization)
 
 ### Normalization
 
 - Batch Normalization: Probably came out first
-- A layer which can be sprinkled throughout the net wherever linearity is present. Before activations.
-- It leads to Centering of the inputs to the next layer by coupling of all examples
-- Due to this centering effect, individual biases loose the value and hence we require two new parameters for the batchNorm layer
+- A layer that can be sprinkled throughout the net wherever linearity is present. Before activations.
+- It leads to the Centering of the inputs to the next layer by coupling all examples
+- Due to this centering effect, individual biases lose their value, and hence we require two new parameters for the batch norm layer
 - bngain and bnbias
 - Our final equation on the output of the batchnorm layer looks like this: bngain \* (batch normalization) + bnBias
 
-Normalization Causes huge amounts of bugs, becuase it couples examples vertically in the neural net
+Normalization Causes huge amounts of bugs because it couples examples vertically in the neural net
 Avoid it as much as possible, but seems to be super powerful
 
 Also intrinsically provides regularization
 
-Part 3 also shows how to analyse the behaviour of the network by studying the characteristics of your activations and gradients being propagated. You want to ensure that all the layers receive values whch have similar distribution. This is discussed well in the video.
+Part 3 also shows how to analyze the behavior of the network by studying the characteristics of your activations and gradients being propagated. You want to ensure that all the layers receive values that have similar distribution. This is discussed well in the video.
 
 ## Part-4 Becoming a BackProp Ninja
 
@@ -175,8 +176,8 @@ The difference here is that we are dealing with vectors instead of scalars.
 
 ### Important Observations
 
-Always remember, the end goal is to calculate the gradient of loss with respect to each parameter that has contributed to the loss.
-Hence, only the parameters that have CONTRIBUTED to the accumulation of loss will get affected.
+Always remember the end goal is to calculate the gradient of loss with respect to each parameter that has contributed to the loss.
+Hence, only the parameters that have CONTRIBUTED to the accumulation of loss will be affected.
 This makes finding the derivatives a lot more intuitive.
 
 Rely on dimensionality matching to compute the gradients.
@@ -197,48 +198,48 @@ g = f(x)
 if dg is calculated.
 dx can be calculated using the local derivative and the incoming gradient.
 dg === incoming gradient === dL/dg
-dL/dx = dg/dx \* dL/dg
+dL/dx = dg/dx * dL/dg
 ```
 
 Based on this nature of backpropagation:
-We need to ensure that all the incoming gradients are calculated before we calculate the gradient for a parameter.
+We need to ensure that all the incoming gradients are calculated before calculating the gradient for a parameter.
 
-We can club huge chunks of network into a single pass as long as we are able to effectively compute its gradients.
-This can lead to boost in efficiency as lesser compute is required due to reductino in intermediary layers from input to output.
+We can club huge chunks of the network into a single pass as long as we are able to effectively compute its gradients.
+This can lead to a boost in efficiency as less computation is required due to a reduction in intermediary layers from input to output.
 
 For this, you will have to express multiple passes as a single composite function and analytically derive the gradient.
 
 ### Bessel's correction
 
-Bessel's correction: denominator should be (n - 1) for variance as it is a more realistic approximation as compared to (n).
+Bessel's correction: The denominator should be (n - 1) for variance as it is a more realistic approximation as compared to (n).
 Doesn't matter so much if the value of n is large.
 But let's take the example of Batch Normalization:
-We can have sufficiently small size of batches and in such case it is better to stick with the Bessel's correction.
+We can have sufficiently small size of batches, and in such cases, it is better to stick with Bessel's correction.
 
 ### TODO
 
-Practise analytical calculation of gradients for composite functions. A couple available in Part4 vide.
+Practice analytical calculation of gradients for composite functions. A couple are available in the Part4 video.
 
-## Wavenet and Designing networks for more efficient gpu compute utilization.
+## Wavenet and Designing networks for more efficient GPU compute utilization.
 
 Wavenet processes sequences of audio data using dilated convolutions to capture temporal dependencies.
 Torch matmul implementation and other functions:
-It only matches the dimensions of the very last value in shape of the first tensor with the very first value of shape in the second tensor while using @
+It only matches the dimensions of the very last value in the shape of the first tensor with the very first value of shape in the second tensor while using @
 
-We need to be careful while implementing different layers as they should also be able to process this multidimensional input.
-Specifically the BatchNorm Layer needs to ensure that it is only calculating the mean and variance along the desired dimensions.
+We need to be careful while implementing different layers, as they should also be able to process this multidimensional input.
+Specifically the BatchNorm Layer needs to ensure that it only calculates the mean and variance along the desired dimensions.
 We handle that in this lecture.
 
 Haven't implemented the residual connections and skip connections
 
 ### Why convolutions: Makes it more efficient to train the network
 
-- Doesn't change the behavioiur of the network
-- Convolutions allows us to slide the entire model efficiently over the input sequence.
-- Makes the for loop: inside the cuda and not in python.
+- Doesn't change the behavior of the network
+- Convolutions allow us to slide the entire model efficiently over the input sequence.
+- Makes the for loop: inside the cuda and not in Python.
 
-### Notes on Development Process
+### Notes on the Development Process
 
 - Prototype in Jupyter and once satisfied with the functionality
-- Copy paste into the main repository
+- Copy and paste into the main repository
 - Kick off experiements.
